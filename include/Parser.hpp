@@ -20,6 +20,10 @@ class Parser {
         std::vector<std::string> getLogs() {
             return logs;
         }
+
+        size_t getLogsSize() {
+            return logs.size();
+        }
     private:
         std::vector<std::string> logs;
 };

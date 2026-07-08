@@ -21,7 +21,7 @@ const int SECONDS_TO_DELAY = 1;
 
 class ReplayEngine {
     public:
-    ReplayEngine(std::vector<std::string> logs) {
+    ReplayEngine(std::vector<std::string> logs): events_{}, current_event_{0} {
         for (size_t i = 1; i < logs.size(); i++) { // skip first line
             std::vector<std::string> tokens;
             for (const auto word : std::views::split(logs[i], ',')) {
@@ -45,11 +45,24 @@ class ReplayEngine {
     }
 
     void play() {
-        for (Event event : events_) {
+        while (current_event_ < events_.size()) {
+            step();
             std::this_thread::sleep_for(std::chrono::seconds(SECONDS_TO_DELAY));
-            event.print();
         }
     }
+
+    void step() {
+        if (current_event_ >= 0 and current_event_ < events_.size()) {
+            events_[current_event_].print();
+            current_event_ += 1;
+        }
+    }
+
+    void reset() {
+        current_event_ = 0;
+    }
+    
     private:
     std::vector<Event> events_;
+    size_t current_event_;
 };

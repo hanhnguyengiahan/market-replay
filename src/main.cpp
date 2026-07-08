@@ -1,11 +1,13 @@
 #include <iostream>
-#include "Parser.hpp"
 #include "ReplayEngine.hpp"
-using namespace std;
+#include "CommandParser.hpp"
 
-int main() {
-    Parser parser = Parser("../data/sample_events.csv");
-    ReplayEngine replayEngine = ReplayEngine(parser.getLogs());
-    replayEngine.play();
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <data_file_name>" << "\n";
+        return 1;
+    }
+    CommandParser commandParser = CommandParser(argv[1]);
+    commandParser.parse();
     return 0;
 }
