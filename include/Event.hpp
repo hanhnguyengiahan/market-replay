@@ -1,12 +1,13 @@
 #include <unistd.h>
 #include <iostream>
+#include <format>
 
-enum Side {
+enum class Side {
     BUY,
     SELL
 };
 
-enum EventType {
+enum class EventType {
     ADD_ORDER,
     CANCEL_ORDER,
     TRADE
@@ -30,11 +31,11 @@ class Event {
             price_{price}, quantity_{quantity}, type_{type}, 
             symbol_{symbol}, side_{side}
             {};
-
+        
         void print() {
-            std::cout << format(
-                "Event[{}]: order[{}], type[{}], symbol[{}], side[{}], price[{}], quantity[{}]\n",
-                id_, orderId_, type_, symbol_, side_, price_, quantity_); 
+            std::cout << std::format(
+                "[{}] {:<15} id={:<5} order_id={:<5} symbol={:<5} side={:<5} price={:<5} qty={}\n",
+                timestamp_, type_, id_, orderId_, symbol_, side_, price_, quantity_); 
         }
     private: 
         eid_t id_;
