@@ -5,34 +5,46 @@
 class CommandParser {
     public:
     CommandParser() = delete;
-    CommandParser(std::string filename): parser{filename}, engine{parser.getLogs()} {};
+    explicit CommandParser(std::string filename): parser{filename}, engine{parser.getLogs()} {};
 
     void parse() {
         std::cout << std::format("Loaded {} events.\n\n", parser.getLogsSize());
-        std::string commandList = std::format("Commands:\n"
+        std::string commandList = std::format(
+                                "Commands:\n"
                                 "  play\n"
                                 "  pause\n"
                                 "  step\n"
                                 "  reset\n"
-                                "  speed <x>\n" 
+                                "  speed <x>\n"
                                 "  seek <timestamp>\n" 
                                 "  status\n"
                                 "  quit\n\n"
                                 "> "
                             );
         std::cout << commandList;
-        std::string command;
-        while(std::cin >> command) {
+        std::string line;
+        while(std::getline(std::cin, line)) {
+            std::istringstream iss(line); 
+            std::string command;
+            iss >> command;
             if (command == "play") {
                 engine.play();
             } else if (command == "reset") {
                 engine.reset();
             } else if (command == "step") {
-                engine.step();
+                int numSteps;
+                iss >> numSteps;
+                if (numSteps) {
+                    engine.step(numSteps);
+                } else {
+                    engine.step();
+                }
             } else if (command == "seek") {
-                // std::string timestamp;
-                // std::cin >> timestamp;
-                // engine.seek(timestamp);
+                timestamp_t timestamp;
+                iss >> timestamp;
+                if (timestamp) {
+                    engine.seek(timestamp);
+                }
             } else if (command == "reset") {
                 engine.reset();
             } else if (command == "status") {
