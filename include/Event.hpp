@@ -14,7 +14,8 @@ enum class EventType {
 };
 
 using timestamp_t = size_t;
-using eid_t = size_t;
+using eventId_t = size_t;
+using orderId_t = size_t;
 using price_t = size_t;
 using quantity_t = size_t;
 using symbol_t = std::string;
@@ -24,7 +25,7 @@ using side_t = std::string;
 class Event {
     public:
         Event() = default;
-        Event(eid_t id, eid_t orderId, timestamp_t timestamp,
+        Event(eventId_t id, orderId_t orderId, timestamp_t timestamp,
             price_t price, quantity_t quantity, type_t type, 
             symbol_t symbol, side_t side):
             id_{id}, orderId_{orderId}, timestamp_{timestamp}, 
@@ -42,8 +43,8 @@ class Event {
             return timestamp_;
         }
     private: 
-        eid_t id_;
-        eid_t orderId_;
+        eventId_t id_;
+        orderId_t orderId_;
         timestamp_t timestamp_;
         type_t type_;
         symbol_t symbol_;
