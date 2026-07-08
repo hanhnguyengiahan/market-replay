@@ -96,7 +96,6 @@ class ReplayEngine {
         //     events_[currentEvent_].timestamp_,
         //     current_speed_,
         // );
-
     }
     
     private:

@@ -2,10 +2,9 @@
 #include "Parser.hpp"
 #include <format>
 
-class CommandParser {
+class Application {
     public:
-    CommandParser() = delete;
-    explicit CommandParser(std::string filename): parser{filename}, engine{parser.getLogs()} {};
+    explicit Application(std::string filename): parser{filename}, engine{parser.getLogs()} {};
 
     void parse() {
         std::cout << std::format("Loaded {} events.\n\n", parser.getLogsSize());
