@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/han/dev/c++/market_replay/main'
+relocations:     []
+...
