@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Parser.hpp"
 #include <format>
+#include <thread>
 
 class Application {
     public:

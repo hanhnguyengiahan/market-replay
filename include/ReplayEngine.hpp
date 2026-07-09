@@ -6,6 +6,8 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <mutex>
+#include <condition_variable>
 
 enum class EventParams {
     Timestamp = 0,
@@ -17,11 +19,19 @@ enum class EventParams {
     Price,
     Quantity
 };
+
 const int SECONDS_TO_DELAY = 1;
+
+std::mutex m;
+std::condition_variable cv;
+std::string data;
+bool playing = false;
+bool processed = false;
 
 class ReplayEngine {
     public:
-    ReplayEngine(std::vector<std::string> logs): events_{}, currentEvent_{0}, isPaused_{false} {
+    ReplayEngine(std::vector<std::string> logs):
+    events_{}, currentEvent_{0}, isPaused_{false}, replayThread_{std::thread(&ReplayEngine::keepAlive, this)} {
         for (size_t i = 1; i < logs.size(); i++) { // skip first line
             std::vector<std::string> tokens;
             for (const auto word : std::views::split(logs[i], ',')) {
@@ -44,11 +54,29 @@ class ReplayEngine {
         }
     }
 
-    void play() {
+    void keepAlive() {
+        while (1) {
+            std::unique_lock lk(m);
+            cv.wait(lk, []{ return playing; });
+            executePlay();
+            lk.unlock();
+        }
+    }
+
+    void executePlay() {
         while (currentEvent_ < events_.size()) {
             step();
             std::this_thread::sleep_for(std::chrono::seconds(SECONDS_TO_DELAY));
         }
+        playing = false;
+    }
+
+    void play() {
+        {
+            std::unique_lock lk(m);
+            playing = true;
+        }
+        cv.notify_one();
     }
 
     void step() {
@@ -102,4 +130,5 @@ class ReplayEngine {
     std::vector<Event> events_;
     size_t currentEvent_;
     bool isPaused_;
+    std::thread replayThread_;
 };
