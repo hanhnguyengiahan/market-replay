@@ -5,8 +5,16 @@
 
 class Application {
     public:
-    explicit Application(std::string filename): parser{filename}, engine{parser.getLogs()} {};
-
+    Application(std::string filename)
+        try
+            : parser{filename},
+            engine{parser.getLogs()}
+        {
+        }
+        catch (const std::invalid_argument& e) {
+            // rethrow
+            throw;
+        }
     void parse() {
         std::cout << std::format("Loaded {} events.\n\n", parser.getLogsSize());
         std::string commandList = std::format(
