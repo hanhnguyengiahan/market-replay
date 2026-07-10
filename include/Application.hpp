@@ -15,6 +15,7 @@ class Application {
             // rethrow
             throw;
         }
+    
     void parse() {
         std::cout << std::format("Loaded {} events.\n\n", parser.getLogsSize());
         std::string commandList = std::format(
@@ -40,7 +41,7 @@ class Application {
             } else if (command == "reset") {
                 engine.reset();
             } else if (command == "step") {
-                int numSteps;
+                int numSteps = 0;
                 iss >> numSteps;
                 if (numSteps) {
                     engine.step(numSteps);
@@ -57,6 +58,8 @@ class Application {
                 engine.reset();
             } else if (command == "status") {
                 // engine.status();
+            } else if (command == "pause") {
+                engine.pause();
             } else if (command == "quit") {
                 break;
             } else {

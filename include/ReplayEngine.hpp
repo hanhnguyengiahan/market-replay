@@ -8,6 +8,7 @@
 #include <chrono>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
 enum class EventParams {
     Timestamp = 0,
@@ -24,9 +25,10 @@ const int SECONDS_TO_DELAY = 1;
 
 std::mutex m;
 std::condition_variable cv;
-std::string data;
 bool playing = false;
+bool stepping = false;
 bool processed = false;
+bool stop = false;
 
 class ReplayEngine {
     public:
@@ -57,39 +59,60 @@ class ReplayEngine {
     void keepAlive() {
         while (1) {
             std::unique_lock lk(m);
-            cv.wait(lk, []{ return playing; });
-            executePlay();
+            cv.wait(lk, []{ return !stop && (playing | stepping); });
+            if (playing) {
+                executePlay();
+            } else if (stepping) {
+                executeStep();
+            }
             lk.unlock();
         }
     }
 
     void executePlay() {
-        while (currentEvent_ < events_.size()) {
-            step();
+        while (!stop && currentEvent_ < events_.size()) {
+            executeStep();
             std::this_thread::sleep_for(std::chrono::seconds(SECONDS_TO_DELAY));
         }
         playing = false;
     }
 
+    void executeStep() {
+        if (!stop && (currentEvent_ >= 0 and currentEvent_ < events_.size())) {
+            events_[currentEvent_].print();
+            currentEvent_ += 1;
+        }
+        stepping = false;
+    }
+
     void play() {
         {
             std::unique_lock lk(m);
+            stop = false;
             playing = true;
         }
         cv.notify_one();
     }
-
+    
     void step() {
-        if (currentEvent_ >= 0 and currentEvent_ < events_.size()) {
-            events_[currentEvent_].print();
-            currentEvent_ += 1;
+        {
+            std::unique_lock lk(m);
+            stop = false;
+            stepping = true;
         }
+        cv.notify_one();
     }
 
     void step(int numSteps) {
         for (int i = 0; i < numSteps; i++) {
-            step();
+            executeStep();
         }
+    }
+
+    void pause() {
+        // set the stop flag to true so the current thread can stop
+        stop = true;
+        cv.notify_one();
     }
 
     void reset() {
