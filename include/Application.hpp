@@ -3,6 +3,8 @@
 #include <format>
 #include <thread>
 
+const int DEFAULT_NUM_STEP = 1;
+
 class Application {
     public:
     Application(std::string filename)
@@ -41,13 +43,9 @@ class Application {
             } else if (command == "reset") {
                 engine.reset();
             } else if (command == "step") {
-                int numSteps = 0;
+                int numSteps{DEFAULT_NUM_STEP};
                 iss >> numSteps;
-                if (numSteps) {
-                    engine.step(numSteps);
-                } else {
-                    engine.step();
-                }
+                engine.step(numSteps);
             } else if (command == "seek") {
                 timestamp_t timestamp;
                 iss >> timestamp;
