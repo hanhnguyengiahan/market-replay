@@ -12,6 +12,7 @@ add_executable(
     main
     src/main.cpp
     src/ReplayEngine.cpp
+    src/Application.cpp
 )
 
 target_include_directories(main PRIVATE
