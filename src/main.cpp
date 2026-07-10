@@ -7,7 +7,12 @@ int main(int argc, char *argv[]) {
         std::cerr << "Usage: " << argv[0] << " <data_file_name>" << "\n";
         return 1;
     }
-    Application app = Application(argv[1]);
-    app.parse();
+
+    try {
+        Application app = Application(argv[1]);
+        app.parse();
+    } catch (std::exception& e) {
+        std::cerr << e.what() << "\n";
+    }
     return 0;
 }

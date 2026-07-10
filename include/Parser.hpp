@@ -1,14 +1,15 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
+
 class Parser {
     public:
         explicit Parser(std::string filename) {
             std::ifstream file(filename);
 
             if (!file.is_open()) {
-                // TODO: throw exception?
-                std::cerr << "Cannot open file!";
+                throw std::invalid_argument(std::format("Cannot open the file with this name: {}", filename));
             }
             
             std::string line;
