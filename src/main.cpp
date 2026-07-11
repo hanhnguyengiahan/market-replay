@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     Application app = Application(argv[1]);
     app.parse();
   } catch (std::exception &e) {
-    std::cerr << e.what() << "\n";        
+                            std::cerr << e.what() << "\n";        
   }
   return 0;
 }
