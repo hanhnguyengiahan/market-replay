@@ -16,22 +16,22 @@ using type_t = std::string;
 using side_t = std::string;
 
 class Event {
-public:
-  Event() = default;
-  Event(eventId_t id, orderId_t orderId, timestamp_t timestamp, price_t price,
-        quantity_t quantity, type_t type, symbol_t symbol, side_t side);
+  public:
+    Event() = default;
+    Event(eventId_t id, orderId_t orderId, timestamp_t timestamp, price_t price,
+          quantity_t quantity, type_t type, symbol_t symbol, side_t side);
 
-  void print();
+    void print();
 
-  timestamp_t getTimestamp();
+    timestamp_t getTimestamp();
 
-private:
-  eventId_t id_;
-  orderId_t orderId_;
-  timestamp_t timestamp_;
-  type_t type_;
-  symbol_t symbol_;
-  side_t side_;
-  price_t price_;
-  quantity_t quantity_;
+  private:
+    eventId_t id_;
+    orderId_t orderId_;
+    timestamp_t timestamp_;
+    type_t type_;
+    symbol_t symbol_;
+    side_t side_;
+    price_t price_;
+    quantity_t quantity_;
 };

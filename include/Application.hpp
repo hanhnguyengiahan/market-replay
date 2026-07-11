@@ -2,19 +2,19 @@
 #include "ReplayEngine.hpp"
 #include <format>
 #include <iostream>
-#include <thread> 
+#include <thread>
 
 const int DEFAULT_NUM_STEP = 1;
 
 class Application {
-public:
-  Application(std::string filename);
+  public:
+    Application(std::string filename);
 
-  void parse();
+    void parse();
 
-  std::vector<std::string> getLogs();
+    std::vector<std::string> getLogs();
 
-private:
-  Parser parser;
-  ReplayEngine engine;
+  private:
+    Parser parser;
+    ReplayEngine engine;
 };
