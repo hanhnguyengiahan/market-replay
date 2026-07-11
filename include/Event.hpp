@@ -31,10 +31,9 @@ class Event {
         
         void print();
 
-        timestamp_t getTimestamp() {
-            return timestamp_;
-        }
-    private: 
+        timestamp_t getTimestamp();
+
+      private: 
         eventId_t id_;
         orderId_t orderId_;
         timestamp_t timestamp_;
