@@ -21,7 +21,7 @@ class MarketEvent {
     MarketEvent(eventId_t id, orderId_t orderId, timestamp_t timestamp, price_t price,
                 quantity_t quantity, type_t type, symbol_t symbol, side_t side);
 
-    void print();
+    std::string print();
 
     timestamp_t getTimestamp();
 

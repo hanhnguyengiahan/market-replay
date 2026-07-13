@@ -25,6 +25,18 @@ ReplayEngine::ReplayEngine(std::vector<std::string> logs)
     replayThread_ = std::jthread([this](std::stop_token st) { keepAlive(st); });
 }
 
+double ReplayEngine::getProgress() {
+    if (events_.size() == 0)
+        return 0;
+    return static_cast<double>(currentEvent_) / static_cast<double>(events_.size());
+}
+
+std::string ReplayEngine::getLastEvent() {
+    if (currentEvent_ == events_.size())
+        return events_[currentEvent_ - 1].print();
+    return events_[currentEvent_].print();
+}
+
 void ReplayEngine::keepAlive(std::stop_token st) {
     while (!st.stop_requested()) {
         std::unique_lock<std::mutex> lk(m);

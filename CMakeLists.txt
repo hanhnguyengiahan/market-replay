@@ -14,7 +14,7 @@ add_executable(
     src/ReplayEngine.cpp
     src/Application.cpp
     src/Parser.cpp
-    src/Event.cpp
+    src/MarketEvent.cpp
 )
 
 target_include_directories(main PRIVATE
