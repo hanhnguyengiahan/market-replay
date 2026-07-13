@@ -1,4 +1,4 @@
-#include "Event.hpp"
+#include "MarketEvent.hpp"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -36,7 +36,7 @@ class ReplayEngine {
   private:
     void keepAlive(std::stop_token st);
 
-    std::vector<Event> events_;
+    std::vector<MarketEvent> events_;
     size_t currentEvent_;
     bool isPaused_;
     std::jthread replayThread_;

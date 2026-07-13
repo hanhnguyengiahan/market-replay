@@ -15,11 +15,11 @@ using symbol_t = std::string;
 using type_t = std::string;
 using side_t = std::string;
 
-class Event {
+class MarketEvent {
   public:
-    Event() = default;
-    Event(eventId_t id, orderId_t orderId, timestamp_t timestamp, price_t price,
-          quantity_t quantity, type_t type, symbol_t symbol, side_t side);
+    MarketEvent() = default;
+    MarketEvent(eventId_t id, orderId_t orderId, timestamp_t timestamp, price_t price,
+                quantity_t quantity, type_t type, symbol_t symbol, side_t side);
 
     void print();
 

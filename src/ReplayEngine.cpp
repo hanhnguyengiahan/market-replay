@@ -10,14 +10,15 @@ ReplayEngine::ReplayEngine(std::vector<std::string> logs)
         }
 
         auto eventId = std::stoull(tokens[static_cast<size_t>(EventParams::Id)]);
-        Event event = Event(std::stoul(tokens[static_cast<size_t>(EventParams::Id)]),
-                            std::stoul(tokens[static_cast<size_t>(EventParams::OrderId)]),
-                            std::stoul(tokens[static_cast<size_t>(EventParams::Timestamp)]),
-                            std::stoul(tokens[static_cast<size_t>(EventParams::Price)]),
-                            std::stoul(tokens[static_cast<size_t>(EventParams::Quantity)]),
-                            tokens[static_cast<size_t>(EventParams::Type)],
-                            tokens[static_cast<size_t>(EventParams::Symbol)],
-                            tokens[static_cast<size_t>(EventParams::Side)]);
+        MarketEvent event =
+            MarketEvent(std::stoul(tokens[static_cast<size_t>(EventParams::Id)]),
+                        std::stoul(tokens[static_cast<size_t>(EventParams::OrderId)]),
+                        std::stoul(tokens[static_cast<size_t>(EventParams::Timestamp)]),
+                        std::stoul(tokens[static_cast<size_t>(EventParams::Price)]),
+                        std::stoul(tokens[static_cast<size_t>(EventParams::Quantity)]),
+                        tokens[static_cast<size_t>(EventParams::Type)],
+                        tokens[static_cast<size_t>(EventParams::Symbol)],
+                        tokens[static_cast<size_t>(EventParams::Side)]);
         events_.push_back(event);
     }
 
