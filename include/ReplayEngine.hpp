@@ -18,9 +18,11 @@ class ReplayEngine {
   public:
     ReplayEngine(std::vector<std::string> logs);
     ~ReplayEngine() {
-        replayThread_.request_stop();
-        cv.notify_one();
-        replayThread_.join();
+        replayThread_.request_stop(); // request for engine thread's termination
+        cv.notify_one();      // wake the engine thread up if it's waiting for incoming commands or
+                              // termination request
+        replayThread_.join(); // make the main thread waits for the engine thread to finish
+                              // termination before destructing mutexes
     };
     void executePlay();
     void play();
