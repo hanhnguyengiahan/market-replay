@@ -6,7 +6,6 @@ Application::Application(std::string filename) try : parser{filename}, engine{pa
 }
 
 void Application::parse() {
-    std::cout << std::format("Loaded {} events.\n\n", parser.getLogsSize());
     std::string commandList = std::format("Commands:\n"
                                           "  play\n"
                                           "  pause\n"
