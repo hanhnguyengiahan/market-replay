@@ -9,7 +9,6 @@ const int DEFAULT_NUM_STEP = 1;
 class Application {
   public:
     Application(std::string filename);
-
     void parse();
 
     std::vector<std::string> getLogs();
