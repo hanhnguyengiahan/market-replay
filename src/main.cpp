@@ -6,7 +6,7 @@
 #include <ftxui/component/event.hpp>
 #include <iostream>
 
-void renderTerminal(Application& app) {
+void renderApp(Application& app) {
     using namespace ftxui;
 
     auto screen = App::FitComponent();
@@ -60,7 +60,6 @@ void renderTerminal(Application& app) {
 }
 
 int main(int argc, char* argv[]) {
-
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <data_file_name>" << "\n";
         return 1;
@@ -71,7 +70,7 @@ int main(int argc, char* argv[]) {
         Application app = Application(argv[1]);
         std::cout << std::format("Loaded {} events.\n\n", app.getLogs().size());
         std::cout << "Launching replay..." << "\n";
-        renderTerminal(app);
+        renderApp(app);
     } catch (std::exception& e) {
         std::cerr << "Exception thrown: " << e.what() << "\n";
     }
