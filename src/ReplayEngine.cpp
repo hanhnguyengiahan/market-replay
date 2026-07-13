@@ -1,8 +1,7 @@
 #include "ReplayEngine.hpp"
 
 ReplayEngine::ReplayEngine(std::vector<std::string> logs)
-    : events_{}, currentEvent_{0}, isPaused_{false},
-      replayThread_{std::thread(&ReplayEngine::keepAlive, this)} {
+    : events_{}, currentEvent_{0}, isPaused_{false} {
     for (size_t i = 1; i < logs.size(); i++) { // skip first line
         std::vector<std::string> tokens;
         for (const auto word : std::views::split(logs[i], ',')) {
@@ -21,20 +20,19 @@ ReplayEngine::ReplayEngine(std::vector<std::string> logs)
                             tokens[static_cast<size_t>(EventParams::Side)]);
         events_.push_back(event);
     }
+
+    replayThread_ = std::jthread([this](std::stop_token st) { keepAlive(st); });
 }
 
-void ReplayEngine::executePlay() {
-    while (!stop && currentEvent_ < events_.size()) {
-        executeStep(1);
-        std::this_thread::sleep_for(std::chrono::seconds(SECONDS_TO_DELAY));
-    }
-    playing = false;
-}
-
-void ReplayEngine::keepAlive() {
-    while (1) {
+void ReplayEngine::keepAlive(std::stop_token st) {
+    while (!st.stop_requested()) {
         std::unique_lock<std::mutex> lk(m);
-        cv.wait(lk, [this] { return !stop && (playing | stepping); });
+        cv.wait(lk, st, [this] { return !paused && (playing || stepping); });
+
+        if (st.stop_requested()) {
+            break;
+        }
+
         if (playing) {
             executePlay();
         } else if (stepping) {
@@ -44,10 +42,18 @@ void ReplayEngine::keepAlive() {
     }
 }
 
+void ReplayEngine::executePlay() {
+    while (!paused && currentEvent_ < events_.size()) {
+        executeStep(1);
+        std::this_thread::sleep_for(std::chrono::seconds(SECONDS_TO_DELAY));
+    }
+    playing = false;
+}
+
 void ReplayEngine::play() {
     {
         std::unique_lock<std::mutex> lk(m);
-        stop = false;
+        paused = false;
         playing = true;
     }
     cv.notify_one();
@@ -55,7 +61,7 @@ void ReplayEngine::play() {
 
 void ReplayEngine::executeStep(int numSteps) {
     for (int i = 0; i < numSteps; i++) {
-        if (stop)
+        if (paused)
             break;
         if (currentEvent_ >= 0 and currentEvent_ < events_.size()) {
             events_[currentEvent_].print();
@@ -68,7 +74,7 @@ void ReplayEngine::executeStep(int numSteps) {
 void ReplayEngine::step(int numSteps) {
     {
         std::unique_lock<std::mutex> lk(m);
-        stop = false;
+        paused = false;
         stepping = true;
         numSteps_ = numSteps;
     }
@@ -76,8 +82,7 @@ void ReplayEngine::step(int numSteps) {
 }
 
 void ReplayEngine::pause() {
-    // set the 'stop' flag to true so the current thread can stop
-    stop = true;
+    paused = true;
     cv.notify_one();
 }
 

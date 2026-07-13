@@ -17,7 +17,11 @@ const int SECONDS_TO_DELAY = 1;
 class ReplayEngine {
   public:
     ReplayEngine(std::vector<std::string> logs);
-    void keepAlive();
+    ~ReplayEngine() {
+        replayThread_.request_stop();
+        cv.notify_one();
+        replayThread_.join();
+    };
     void executePlay();
     void play();
     void executeStep(int numSteps);
@@ -28,15 +32,17 @@ class ReplayEngine {
     void status();
 
   private:
+    void keepAlive(std::stop_token st);
+
     std::vector<Event> events_;
     size_t currentEvent_;
     bool isPaused_;
-    std::thread replayThread_;
+    std::jthread replayThread_;
     int numSteps_;
 
     std::mutex m;
-    std::condition_variable cv;
+    std::condition_variable_any cv;
     bool playing = false;
     bool stepping = false;
-    bool stop = false;
+    bool paused = false;
 };
