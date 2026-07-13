@@ -2,7 +2,6 @@
 #include "ftxui/component/app.hpp"            // for Component, App
 #include "ftxui/component/captured_mouse.hpp" // for ftxui
 #include "ftxui/component/component.hpp" // for Slider, Checkbox, Vertical, Renderer, Button, Input, Menu, Radiobox, Toggle
-#include "ftxui/component/component_base.hpp" // for ComponentBase
 #include "ftxui/dom/elements.hpp"
 #include <ftxui/component/event.hpp>
 #include <iostream>
