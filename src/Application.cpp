@@ -26,7 +26,7 @@ void Application::parse(int command) {
         }
     } else if (command == Command::STATUS) {
         // engine.status();
-    } else if (command == Command::STATUS) {
+    } else if (command == Command::PAUSE) {
         engine.pause();
     } else if (command == Command::QUIT) {
 
