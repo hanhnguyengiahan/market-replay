@@ -1,4 +1,8 @@
+
+
 # Market Replay
+
+<img src="./images/market-replay-demo.gif" width="500" alt="Demo Animation">
 
 A multithreaded market replay engine written in modern C++20.
 
