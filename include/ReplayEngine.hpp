@@ -31,7 +31,7 @@ class ReplayEngine {
     void pause();
     void reset();
     void seek(timestamp_t timestampToSeek);
-    void status();
+    std::string status();
 
     double getProgress();
     std::string getLastEvent();
@@ -40,7 +40,7 @@ class ReplayEngine {
     void keepAlive(std::stop_token st);
 
     std::vector<MarketEvent> events_;
-    size_t currentEvent_;
+    int currentEvent_;
     bool isPaused_;
     std::jthread replayThread_;
     int numSteps_;

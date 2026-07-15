@@ -24,13 +24,10 @@ void Application::parse(int command) {
         if (timestamp) {
             engine.seek(timestamp);
         }
-    } else if (command == Command::STATUS) {
-        // engine.status();
     } else if (command == Command::PAUSE) {
         engine.pause();
     } else if (command == Command::QUIT) {
-
-    } else {
+        // std::this_thread::
     }
 }
 
@@ -42,6 +39,11 @@ double Application::getProgress(ftxui::App& screen) {
 std::string Application::getLastEvent(ftxui::App& screen) {
     screen.PostEvent(ftxui::Event::Custom);
     return engine.getLastEvent();
+}
+
+std::string Application::getStatus(ftxui::App& screen) {
+    screen.PostEvent(ftxui::Event::Custom);
+    return engine.status();
 }
 
 std::vector<std::string> Application::getLogs() {

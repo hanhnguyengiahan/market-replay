@@ -7,7 +7,7 @@
 
 const int DEFAULT_NUM_STEP = 1;
 
-enum Command { PLAY = 0, STEP, STATUS, PAUSE, RESET, SEEK, QUIT };
+enum Command { PLAY = 0, STEP, PAUSE, RESET, SEEK, QUIT };
 
 class Application {
   public:
@@ -18,6 +18,7 @@ class Application {
     std::string getFilename();
     double getProgress(ftxui::App& screen);
     std::string getLastEvent(ftxui::App& screen);
+    std::string getStatus(ftxui::App& screen);
 
   private:
     Parser parser;

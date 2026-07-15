@@ -1,7 +1,8 @@
 #include "ReplayEngine.hpp"
+#include <utility>
 
 ReplayEngine::ReplayEngine(std::vector<std::string> logs)
-    : events_{}, currentEvent_{0}, isPaused_{false} {
+    : events_{}, currentEvent_{-1}, isPaused_{false} {
     for (size_t i = 1; i < logs.size(); i++) { // skip first line
         std::vector<std::string> tokens;
         for (const auto word : std::views::split(logs[i], ',')) {
@@ -26,14 +27,12 @@ ReplayEngine::ReplayEngine(std::vector<std::string> logs)
 }
 
 double ReplayEngine::getProgress() {
-    if (events_.size() == 0)
-        return 0;
-    return static_cast<double>(currentEvent_) / static_cast<double>(events_.size());
+    return static_cast<double>(currentEvent_ + 1) / static_cast<double>(events_.size());
 }
 
 std::string ReplayEngine::getLastEvent() {
-    if (currentEvent_ == events_.size())
-        return events_[currentEvent_ - 1].print();
+    if (currentEvent_ == -1)
+        return "";
     return events_[currentEvent_].print();
 }
 
@@ -56,7 +55,7 @@ void ReplayEngine::keepAlive(std::stop_token st) {
 }
 
 void ReplayEngine::executePlay() {
-    while (!paused && currentEvent_ < events_.size()) {
+    while (!paused && std::cmp_less(currentEvent_, events_.size() - 1)) {
         executeStep(1);
         std::this_thread::sleep_for(std::chrono::seconds(SECONDS_TO_DELAY));
     }
@@ -76,9 +75,10 @@ void ReplayEngine::executeStep(int numSteps) {
     for (int i = 0; i < numSteps; i++) {
         if (paused)
             break;
-        if (currentEvent_ >= 0 and currentEvent_ < events_.size()) {
-            events_[currentEvent_].print();
+
+        if (std::cmp_less(currentEvent_, events_.size() - 1)) {
             currentEvent_ += 1;
+            events_[currentEvent_].print();
         }
     }
     stepping = false;
@@ -100,7 +100,7 @@ void ReplayEngine::pause() {
 }
 
 void ReplayEngine::reset() {
-    currentEvent_ = 0;
+    currentEvent_ = -1;
 }
 
 void ReplayEngine::seek(timestamp_t timestampToSeek) {
@@ -112,23 +112,13 @@ void ReplayEngine::seek(timestamp_t timestampToSeek) {
     }
 }
 
-/*
-> status
+std::string ReplayEngine::status() {
+    if (currentEvent_ == events_.size() - 1) {
+        return "Finished";
+    }
 
-    State: Paused
-    Current event: 12539 / 1532840
-    Timestamp: 09:30:00.000024
-    Speed: 1x
-*/
-void ReplayEngine::status() {
-    // std::string statusFormat = std::format(
-    //     "State: {}\n"
-    //     "Current event: {}\n"
-    //     "Timestamp: {}"
-    //     "Speed: {}",
-    //     stop,
-    //     currentEvent_,
-    //     events_[currentEvent_].timestamp_,
-    //     current_speed_,
-    // );
+    if (currentEvent_ != -1) {
+        return "In progress";
+    }
+    return "Ready";
 }
