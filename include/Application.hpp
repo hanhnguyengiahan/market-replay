@@ -18,6 +18,7 @@ class Application {
     std::string getFilename();
     double getProgress(ftxui::App& screen);
     std::string getLastEvent(ftxui::App& screen);
+    std::string getLastEventTimestamp(ftxui::App& screen);
     std::string getStatus(ftxui::App& screen);
 
   private:

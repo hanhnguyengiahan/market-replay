@@ -35,6 +35,7 @@ class ReplayEngine {
 
     double getProgress();
     std::string getLastEvent();
+    std::string getLastEventTimestamp();
 
   private:
     void keepAlive(std::stop_token st);

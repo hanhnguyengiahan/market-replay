@@ -28,7 +28,7 @@ void renderApp(Application& app) {
                            text("State: " + app.getStatus(screen)),
                            text("Progress") | bold,
                            gauge(app.getProgress(screen)) | flex | border,
-                           text("Timestamp: "),
+                           text("Timestamp: " + app.getLastEventTimestamp(screen)),
                            separator(),
                            text("Last Event") | bold,
                            text(app.getLastEvent(screen)),

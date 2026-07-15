@@ -46,6 +46,11 @@ std::string Application::getStatus(ftxui::App& screen) {
     return engine.status();
 }
 
+std::string Application::getLastEventTimestamp(ftxui::App& screen) {
+    screen.PostEvent(ftxui::Event::Custom);
+    return engine.getLastEventTimestamp();
+}
+
 std::vector<std::string> Application::getLogs() {
     return parser.getLogs();
 }

@@ -36,6 +36,13 @@ std::string ReplayEngine::getLastEvent() {
     return events_[currentEvent_].print();
 }
 
+std::string ReplayEngine::getLastEventTimestamp() {
+    if (currentEvent_ == -1)
+        return "";
+
+    return std::to_string(events_[currentEvent_].getTimestamp());
+}
+
 void ReplayEngine::keepAlive(std::stop_token st) {
     while (!st.stop_requested()) {
         std::unique_lock<std::mutex> lk(m);
