@@ -6,9 +6,9 @@ MarketEvent::MarketEvent(eventId_t id, orderId_t orderId, timestamp_t timestamp,
       type_{type}, symbol_{symbol}, side_{side} {};
 
 std::string MarketEvent::print() {
-    return std::format("[{}] {:<15} id={:<5} order_id={:<5} symbol={:<5} "
+    return std::format("{:<13} id={:<5} order_id={:<5} symbol={:<5} "
                        "side={:<5} price={:<5} qty={}\n",
-                       timestamp_, type_, id_, orderId_, symbol_, side_, price_, quantity_);
+                       type_, id_, orderId_, symbol_, side_, price_, quantity_);
 }
 
 timestamp_t MarketEvent::getTimestamp() {
