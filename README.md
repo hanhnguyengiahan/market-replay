@@ -7,21 +7,14 @@ The application replays historical market events from a CSV file, allowing users
 ## Features
 
 - Load market events from a CSV file
-- Interactive terminal UI (FTXUI)
-- Replay controls
-  - Play
-  - Pause
-  - Step
-  - Reset
+- Interactive terminal UI (FTXUI) with replay controls
+  - Play: replaying the market events
+  - Pause: pause the replay at any point to further inspect event or order
+  - Step: step one step forward to the next available event
+  - Reset: go back to the first event
   - Quit
-- Multithreaded replay engine
-- Replay progress tracking
-- Current replay timestamp
-- Current replay state
-- Last processed event display
 
 The replay engine is independent of the user interface, allowing different frontends (CLI, TUI, GUI) to be built on top of the same core engine.
-
 
 ## Building
 
@@ -41,7 +34,6 @@ specify a dataset:
 ./market_replay data/events.csv
 ```
 
-
 ## Controls
 
 | Command | Description |
@@ -52,16 +44,17 @@ specify a dataset:
 | Reset | Return to the beginning |
 | Quit | Exit the application |
 
-## Future Improvements
+## TODO List
 
+### Control features
 - Playback speed control
 - Seek to timestamp
-- Progress bar
-- Limit order book reconstruction
+
+### Expansion
+- Display the limit order book instead of events for further inspection (diff, PnL, etc) of relevant orders. 
 - Best bid / ask visualization
-- Multiple market data formats
-- Benchmarking
+- Multiple market data formats (different file formats, unordered arrival time events, etc)
+
+### Others
 - Unit tests
 - Qt frontend
-
-## Example
