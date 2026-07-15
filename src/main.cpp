@@ -36,10 +36,10 @@ void renderApp(Application& app) {
 
                        separator(),
 
-                       menu->Render() | size(WIDTH, EQUAL, 20),
+                       menu->Render() | size(WIDTH, EQUAL, 10),
                    }) | flex,
                }) |
-               flex | border;
+               size(WIDTH, GREATER_THAN, 110) | size(HEIGHT, GREATER_THAN, 10) | border;
     });
 
     component = CatchEvent(component, [&](Event event) {
