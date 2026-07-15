@@ -4,16 +4,15 @@
 #include "ftxui/component/component.hpp" // for Slider, Checkbox, Vertical, Renderer, Button, Input, Menu, Radiobox, Toggle
 #include "ftxui/dom/elements.hpp"
 #include <ftxui/component/event.hpp>
+#include <ftxui/component/screen_interactive.hpp>
 #include <iostream>
-
 void renderApp(Application& app) {
     using namespace ftxui;
 
-    auto screen = App::FitComponent();
+    auto screen = ScreenInteractive::FitComponent();
 
-    // -- Menu
     const std::vector<std::string> menu_entries = {
-        "play", "step", "status", "pause", "reset", "seek", "quit",
+        "play", "step", "pause", "reset", "seek", "quit",
     };
     int menu_selected = -1;
     auto menu = Menu(&menu_entries, &menu_selected);
@@ -22,23 +21,25 @@ void renderApp(Application& app) {
         return vbox({
                    text("Market Replay") | bold | center,
                    separator(),
+
                    hbox({
                        vbox({
                            text("Filename: " + app.getFilename()),
-                           text("State: "),
+                           text("State: " + app.getStatus(screen)),
                            text("Progress") | bold,
-                           border(gauge(app.getProgress(screen))) | color(Color::Green),
+                           gauge(app.getProgress(screen)) | flex | border,
                            text("Timestamp: "),
                            separator(),
                            text("Last Event") | bold,
-                           text(app.getLastEvent(screen)) | color(Color::HotPink2),
-                       }),
-                       separator(),
-                       menu->Render(),
-                   }),
+                           text(app.getLastEvent(screen)),
+                       }) | flex,
 
+                       separator(),
+
+                       menu->Render() | size(WIDTH, EQUAL, 20),
+                   }) | flex,
                }) |
-               border;
+               flex | border;
     });
 
     component = CatchEvent(component, [&](Event event) {
