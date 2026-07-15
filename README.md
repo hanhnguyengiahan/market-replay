@@ -19,11 +19,7 @@ The replay engine is independent of the user interface, allowing different front
 ## Building
 
 ```bash
-mkdir build
-cd build
-
-cmake ..
-cmake --build .
+cmake -B build
 ```
 
 ## Running
@@ -31,7 +27,7 @@ cmake --build .
 specify a dataset:
 
 ```bash
-./market_replay data/events.csv
+./build/main data/sample_events.csv
 ```
 
 ## Controls
