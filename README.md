@@ -54,6 +54,7 @@ specify a dataset:
 - Display the limit order book instead of events for further inspection (diff, PnL, etc) of relevant orders. 
 - Best bid / ask visualization
 - Multiple market data formats (different file formats, unordered arrival time events, etc)
+- Ability to have multiple replay sessions
 
 ### Others
 - Unit tests
