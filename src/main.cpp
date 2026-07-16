@@ -51,13 +51,6 @@ void renderApp(Application& app) {
     });
 
     screen.Loop(component);
-
-    // std::jthread t([&](std::stop_token st) {
-    //     while (!st.stop_requested()) {
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    //         screen.PostEvent(Event::Custom);
-    //     }
-    // });
 }
 
 int main(int argc, char* argv[]) {
