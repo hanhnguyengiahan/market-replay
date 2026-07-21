@@ -1,3 +1,4 @@
+#pragma once
 #include "Parser.hpp"
 #include "ReplayEngine.hpp"
 #include "ftxui/component/app.hpp"
@@ -16,10 +17,10 @@ class Application {
 
     std::vector<std::string> getLogs();
     std::string getFilename();
-    double getProgress(ftxui::App& screen);
-    std::string getLastEvent(ftxui::App& screen);
-    std::string getLastEventTimestamp(ftxui::App& screen);
-    std::string getStatus(ftxui::App& screen);
+    double getProgress();
+    std::string getLastEvent();
+    std::string getLastEventTimestamp();
+    std::string getStatus();
 
   private:
     Parser parser;

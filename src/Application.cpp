@@ -31,23 +31,19 @@ void Application::parse(int command) {
     }
 }
 
-double Application::getProgress(ftxui::App& screen) {
-    screen.PostEvent(ftxui::Event::Custom);
+double Application::getProgress() {
     return engine.getProgress();
 }
 
-std::string Application::getLastEvent(ftxui::App& screen) {
-    screen.PostEvent(ftxui::Event::Custom);
+std::string Application::getLastEvent() {
     return engine.getLastEvent();
 }
 
-std::string Application::getStatus(ftxui::App& screen) {
-    screen.PostEvent(ftxui::Event::Custom);
+std::string Application::getStatus() {
     return engine.status();
 }
 
-std::string Application::getLastEventTimestamp(ftxui::App& screen) {
-    screen.PostEvent(ftxui::Event::Custom);
+std::string Application::getLastEventTimestamp() {
     return engine.getLastEventTimestamp();
 }
 
