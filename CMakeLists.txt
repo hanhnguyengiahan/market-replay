@@ -15,6 +15,7 @@ add_executable(
     src/Application.cpp
     src/Parser.cpp
     src/MarketEvent.cpp
+    src/OrderBook.cpp
 )
 
 target_include_directories(main PRIVATE

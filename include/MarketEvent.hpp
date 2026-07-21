@@ -1,19 +1,6 @@
-#include <format>
+#include "Order.hpp"
 #include <iostream>
 #include <unistd.h>
-
-enum class Side { BUY, SELL };
-
-enum class EventType { ADD_ORDER, CANCEL_ORDER, TRADE };
-
-using timestamp_t = size_t;
-using eventId_t = size_t;
-using orderId_t = size_t;
-using price_t = size_t;
-using quantity_t = size_t;
-using symbol_t = std::string;
-using type_t = std::string;
-using side_t = std::string;
 
 class MarketEvent {
   public:
