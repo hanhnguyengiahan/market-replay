@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Order.hpp"
 #include <iostream>
 #include <unistd.h>

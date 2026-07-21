@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Order.hpp"
 #include <map>
 #include <queue>

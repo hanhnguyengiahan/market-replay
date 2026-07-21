@@ -1,3 +1,5 @@
+#pragma once
+
 #include "MarketEvent.hpp"
 #include <atomic>
 #include <chrono>
