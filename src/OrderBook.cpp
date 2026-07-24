@@ -130,7 +130,7 @@ std::vector<std::pair<price_t, quantity_t>> OrderBook::getPriceLevels(std::strin
             priceLevels.emplace_back(price, totalQuantity);
         }
     } else if (side == "SELL") {
-        for (const auto& [price, totalQuantity] : buyPriceLevels) {
+        for (const auto& [price, totalQuantity] : sellPriceLevels) {
             priceLevels.emplace_back(price, totalQuantity);
         }
     }

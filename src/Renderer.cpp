@@ -31,7 +31,6 @@ Element renderOrderBook(Application& app) {
     Elements sellElements;
 
     for (const auto& [price, quantity] : sells) {
-        std::cout << text(std::format("{:<10} {:>8}", price, quantity)) << '\n';
         sellElements.push_back(text(std::format("{:<10} {:>8}", price, quantity)));
     }
 
