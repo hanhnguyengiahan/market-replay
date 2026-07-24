@@ -2,7 +2,7 @@
 #include <utility>
 
 ReplayEngine::ReplayEngine(std::vector<std::string> logs)
-    : events_{}, currentEvent_{-1}, isPaused_{false} {
+    : events_{}, currentEvent_{-1}, isPaused_{false}, orderBook_{} {
     for (size_t i = 1; i < logs.size(); i++) { // skip first line
         std::vector<std::string> tokens;
         for (const auto word : std::views::split(logs[i], ',')) {
@@ -15,7 +15,7 @@ ReplayEngine::ReplayEngine(std::vector<std::string> logs)
             MarketEvent(std::stoul(tokens[static_cast<size_t>(EventParams::Id)]),
                         std::stoul(tokens[static_cast<size_t>(EventParams::OrderId)]),
                         std::stoul(tokens[static_cast<size_t>(EventParams::Timestamp)]),
-                        std::stoul(tokens[static_cast<size_t>(EventParams::Price)]),
+                        std::stod(tokens[static_cast<size_t>(EventParams::Price)]),
                         std::stoul(tokens[static_cast<size_t>(EventParams::Quantity)]),
                         tokens[static_cast<size_t>(EventParams::Type)],
                         tokens[static_cast<size_t>(EventParams::Symbol)],
@@ -41,6 +41,15 @@ std::string ReplayEngine::getLastEventTimestamp() {
         return "";
 
     return std::to_string(events_[currentEvent_].getTimestamp());
+}
+
+std::vector<std::pair<std::string, std::string>> ReplayEngine::getPriceLevels(std::string side) {
+    std::vector<std::pair<std::string, std::string>> res{};
+    std::vector<std::pair<price_t, quantity_t>> priceLevels = orderBook_.getPriceLevels(side);
+    for (const auto& priceLevel : priceLevels) {
+        res.emplace_back(std::to_string(priceLevel.first), std::to_string(priceLevel.second));
+    }
+    return res;
 }
 
 void ReplayEngine::keepAlive(std::stop_token st) {
@@ -85,7 +94,10 @@ void ReplayEngine::executeStep(int numSteps) {
 
         if (std::cmp_less(currentEvent_, events_.size() - 1)) {
             currentEvent_ += 1;
+            auto event = events_[currentEvent_];
             events_[currentEvent_].print();
+            orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
+                                event.type_, event.symbol_, event.side_);
         }
     }
     stepping = false;

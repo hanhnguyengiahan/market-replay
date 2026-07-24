@@ -21,6 +21,7 @@ class Application {
     std::string getLastEvent();
     std::string getLastEventTimestamp();
     std::string getStatus();
+    std::vector<std::pair<std::string, std::string>> getPriceLevels(std::string side);
 
   private:
     Parser parser;

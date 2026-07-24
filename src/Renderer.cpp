@@ -17,8 +17,23 @@ Element renderReplayInfo(Application& app) {
 }
 
 Element renderOrderBook(Application& app) {
-    // auto bids = app.getBids();
-    // auto asks = app.getAsks();
+    using namespace ftxui;
+
+    auto bids = app.getPriceLevels("BUY");
+    Elements bidElements;
+
+    for (const auto& [price, quantity] : bids) {
+        std::cout << text(std::format("{:<10} {:>8}", price, quantity)) << '\n';
+        bidElements.push_back(text(std::format("{:<10} {:>8}", price, quantity)));
+    }
+
+    auto sells = app.getPriceLevels("SELL");
+    Elements sellElements;
+
+    for (const auto& [price, quantity] : sells) {
+        std::cout << text(std::format("{:<10} {:>8}", price, quantity)) << '\n';
+        sellElements.push_back(text(std::format("{:<10} {:>8}", price, quantity)));
+    }
 
     return vbox({
                text("Order Book") | bold | center,
@@ -32,19 +47,11 @@ Element renderOrderBook(Application& app) {
                separator(),
 
                hbox({
-                   vbox({
-                       text("100.25   500"),
-                       text("100.24   800"),
-                       text("100.23   150"),
-                   }) | flex,
+                   vbox(bidElements) | flex,
 
                    separator(),
 
-                   vbox({
-                       text("300   100.30"),
-                       text("200   100.31"),
-                       text("600   100.32"),
-                   }) | flex,
+                   vbox(sellElements) | flex,
                }),
            }) |
            border;

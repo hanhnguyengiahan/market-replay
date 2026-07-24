@@ -47,20 +47,26 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
             if (sellOrders.size() == 0) {
                 sells.erase(lowestSellPrice);
             }
-        }
+        } else
+            break;
     }
 
     if (quantity > 0) {
         std::unique_ptr<Order> order = std::make_unique<Order>(
             Order{orderId, timestamp, price, quantity, type, symbol, "BUY"});
         orders.emplace(std::make_pair(orderId, std::move(order)));
-
         if (!buys.contains(price)) {
             buys.emplace(std::make_pair(price, std::queue<Order*>{}));
         }
 
         auto buyOrders = buys.at(price);
         buyOrders.push(order.get());
+
+        if (!buyPriceLevels.contains(price)) {
+            buyPriceLevels.emplace(std::make_pair(price, 0));
+        }
+
+        buyPriceLevels[price] += quantity;
     }
 
     return trades;
@@ -90,7 +96,8 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
             if (buyOrders.size() == 0) {
                 buys.erase(highestBuyPrice);
             }
-        }
+        } else
+            break;
     }
 
     if (quantity > 0) {
@@ -104,10 +111,33 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
 
         auto sellOrders = sells.at(price);
         sellOrders.push(order.get());
+
+        if (!sellPriceLevels.contains(price)) {
+            sellPriceLevels.emplace(std::make_pair(price, 0));
+        }
+
+        sellPriceLevels[price] += quantity;
     }
 
     return trades;
 }
+
+std::vector<std::pair<price_t, quantity_t>> OrderBook::getPriceLevels(std::string side) {
+    std::vector<std::pair<price_t, quantity_t>> priceLevels{};
+
+    if (side == "BUY") {
+        for (const auto& [price, totalQuantity] : buyPriceLevels) {
+            priceLevels.emplace_back(price, totalQuantity);
+        }
+    } else if (side == "SELL") {
+        for (const auto& [price, totalQuantity] : buyPriceLevels) {
+            priceLevels.emplace_back(price, totalQuantity);
+        }
+    }
+
+    return priceLevels;
+}
+
 bool OrderBook::modifyOrder(orderId_t orderId, quantity_t quantity) {
     if (!orders.contains(orderId))
         return false;

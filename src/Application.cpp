@@ -50,3 +50,7 @@ std::string Application::getLastEventTimestamp() {
 std::vector<std::string> Application::getLogs() {
     return parser.getLogs();
 }
+
+std::vector<std::pair<std::string, std::string>> Application::getPriceLevels(std::string side) {
+    return engine.getPriceLevels(side);
+}

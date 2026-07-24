@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MarketEvent.hpp"
+#include "OrderBook.hpp"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -38,6 +39,7 @@ class ReplayEngine {
     double getProgress();
     std::string getLastEvent();
     std::string getLastEventTimestamp();
+    std::vector<std::pair<std::string, std::string>> getPriceLevels(std::string);
 
   private:
     void keepAlive(std::stop_token st);
@@ -53,4 +55,6 @@ class ReplayEngine {
     bool playing = false;
     bool stepping = false;
     bool paused = false;
+
+    OrderBook orderBook_;
 };
