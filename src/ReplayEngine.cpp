@@ -103,8 +103,12 @@ void ReplayEngine::executeStep(int numSteps) {
 }
 
 void ReplayEngine::updateOrderBook(MarketEvent& event) {
-    orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
-                        event.type_, event.symbol_, event.side_);
+    if (event.type_ == "CANCEL_ORDER") {
+        orderBook_.cancelOrder(event.orderId_);
+    } else {
+        orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
+                            event.type_, event.symbol_, event.side_);
+    }
 }
 
 void ReplayEngine::step(int numSteps) {

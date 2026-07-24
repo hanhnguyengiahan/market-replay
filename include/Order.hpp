@@ -21,7 +21,7 @@ class Order {
     Order(orderId_t orderId, timestamp_t timestamp, price_t price, quantity_t quantity, type_t type,
           symbol_t symbol, side_t side)
         : orderId_{orderId}, timestamp_{timestamp}, price_{price}, quantity_{quantity}, type_{type},
-          symbol_{symbol}, side_{side} {};
+          symbol_{symbol}, side_{side}, cancelled_{false} {};
     orderId_t orderId_;
     timestamp_t timestamp_;
     type_t type_;
@@ -29,4 +29,5 @@ class Order {
     side_t side_;
     price_t price_;
     quantity_t quantity_;
+    bool cancelled_;
 };

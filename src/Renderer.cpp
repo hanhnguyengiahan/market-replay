@@ -23,7 +23,6 @@ Element renderOrderBook(Application& app) {
     Elements bidElements;
 
     for (const auto& [price, quantity] : bids) {
-        std::cout << text(std::format("{:<10} {:>8}", price, quantity)) << '\n';
         bidElements.push_back(text(std::format("{:<10} {:>8}", price, quantity)));
     }
 
@@ -31,7 +30,7 @@ Element renderOrderBook(Application& app) {
     Elements sellElements;
 
     for (const auto& [price, quantity] : sells) {
-        sellElements.push_back(text(std::format("{:<10} {:>8}", price, quantity)));
+        sellElements.push_back(text(std::format("{:<10} {:>8}", quantity, price)));
     }
 
     return vbox({

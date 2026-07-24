@@ -12,6 +12,8 @@ struct Trade {
     orderId_t aggressor;
 };
 
+using orders_queue_t = std::queue<Order*>;
+
 class OrderBook {
   public:
     OrderBook() = default;
@@ -26,8 +28,11 @@ class OrderBook {
                                    quantity_t quantity, type_t type, symbol_t symbol);
     std::vector<Trade> addSellOrder(orderId_t orderId, timestamp_t timestamp, price_t price,
                                     quantity_t quantity, type_t type, symbol_t symbol);
-    std::map<price_t, std::queue<Order*>, std::greater<price_t>> buys;
-    std::map<price_t, std::queue<Order*>> sells;
+    template <typename Compare>
+    void updatePriceLevels(std::map<price_t, quantity_t, Compare>& priceLevels, price_t& price,
+                           quantity_t& quantity, bool add);
+    std::map<price_t, orders_queue_t, std::greater<price_t>> buys;
+    std::map<price_t, orders_queue_t> sells;
     std::map<orderId_t, std::unique_ptr<Order>> orders;
     std::map<price_t, quantity_t, std::greater<price_t>> buyPriceLevels;
     std::map<price_t, quantity_t> sellPriceLevels;

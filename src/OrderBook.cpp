@@ -4,10 +4,35 @@
 bool OrderBook::cancelOrder(orderId_t orderId) {
     if (!orders.contains(orderId))
         return false;
-    auto result = orders.erase(orderId);
 
-    // todo: remove order out of the buys or sells map
-    return result == 1 ? true : false;
+    Order* order = orders[orderId].get();
+
+    order->cancelled_ = true;
+
+    if (order->side_ == "BUY") {
+        updatePriceLevels(buyPriceLevels, order->price_, order->quantity_, false);
+    } else if (order->side_ == "SELL") {
+        updatePriceLevels(sellPriceLevels, order->price_, order->quantity_, false);
+    }
+
+    return true;
+}
+
+template <typename Compare>
+void OrderBook::updatePriceLevels(std::map<price_t, quantity_t, Compare>& priceLevels,
+                                  price_t& price, quantity_t& quantity, bool add) {
+    if (!priceLevels.contains(price)) {
+        priceLevels.emplace(price, 0);
+    }
+
+    if (add) {
+        priceLevels[price] += quantity;
+    } else {
+        priceLevels[price] -= quantity;
+        if (priceLevels[price] == 0) {
+            priceLevels.erase(price);
+        }
+    }
 }
 
 std::vector<Trade> OrderBook::addOrder(orderId_t orderId, timestamp_t timestamp, price_t price,
@@ -34,16 +59,22 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
         if (price >= lowestSellPrice) {
             Order* sellOrder = sellOrders.front();
             sellOrders.pop();
-            auto tradeQuantity = std::min(sellOrder->quantity_, quantity);
-            quantity -= tradeQuantity;
-            sellPriceLevels[sellOrder->price_] -= tradeQuantity;
 
-            Trade trade = {.timestamp = timestamp,
-                           .price = price,
-                           .quantity = tradeQuantity,
-                           .aggressor = orderId};
+            if (!sellOrder->cancelled_) {
+                auto tradeQuantity = std::min(sellOrder->quantity_, quantity);
+                quantity -= tradeQuantity;
 
-            trades.push_back(trade);
+                updatePriceLevels(sellPriceLevels, sellOrder->price_, tradeQuantity, false);
+
+                Trade trade = {.timestamp = timestamp,
+                               .price = price,
+                               .quantity = tradeQuantity,
+                               .aggressor = orderId};
+
+                trades.push_back(trade);
+            } else {
+                orders.erase(sellOrder->orderId_);
+            }
 
             if (sellOrders.size() == 0) {
                 sells.erase(lowestSellPrice);
@@ -85,16 +116,21 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
         if (price <= highestBuyPrice) {
             Order* buyOrder = buyOrders.front();
             buyOrders.pop();
-            auto tradeQuantity = std::min(buyOrder->quantity_, quantity);
-            quantity -= tradeQuantity;
-            buyPriceLevels[buyOrder->price_] -= tradeQuantity;
 
-            Trade trade = {.timestamp = timestamp,
-                           .price = price,
-                           .quantity = tradeQuantity,
-                           .aggressor = orderId};
+            if (!buyOrder->cancelled_) {
+                auto tradeQuantity = std::min(buyOrder->quantity_, quantity);
+                quantity -= tradeQuantity;
+                buyPriceLevels[buyOrder->price_] -= tradeQuantity;
 
-            trades.push_back(trade);
+                Trade trade = {.timestamp = timestamp,
+                               .price = price,
+                               .quantity = tradeQuantity,
+                               .aggressor = orderId};
+
+                trades.push_back(trade);
+            } else {
+                orders.erase(buyOrder->orderId_);
+            }
 
             if (buyOrders.size() == 0) {
                 buys.erase(highestBuyPrice);
