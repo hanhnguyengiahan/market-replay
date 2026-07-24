@@ -95,12 +95,16 @@ void ReplayEngine::executeStep(int numSteps) {
         if (std::cmp_less(currentEvent_, events_.size() - 1)) {
             currentEvent_ += 1;
             auto event = events_[currentEvent_];
-            events_[currentEvent_].print();
-            orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
-                                event.type_, event.symbol_, event.side_);
+            event.print();
+            updateOrderBook(event);
         }
     }
     stepping = false;
+}
+
+void ReplayEngine::updateOrderBook(MarketEvent& event) {
+    orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
+                        event.type_, event.symbol_, event.side_);
 }
 
 void ReplayEngine::step(int numSteps) {

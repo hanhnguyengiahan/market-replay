@@ -43,6 +43,7 @@ class ReplayEngine {
 
   private:
     void keepAlive(std::stop_token st);
+    void updateOrderBook(MarketEvent& event);
 
     std::vector<MarketEvent> events_;
     int currentEvent_;
