@@ -29,6 +29,6 @@ class OrderBook {
     std::map<price_t, std::queue<Order*>, std::greater<price_t>> buys;
     std::map<price_t, std::queue<Order*>> sells;
     std::map<orderId_t, std::unique_ptr<Order>> orders;
-    std::map<price_t, quantity_t> buyPriceLevels;
+    std::map<price_t, quantity_t, std::greater<price_t>> buyPriceLevels;
     std::map<price_t, quantity_t> sellPriceLevels;
 };

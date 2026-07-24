@@ -29,13 +29,14 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
     std::vector<Trade> trades{};
 
     while (quantity > 0 and !sells.empty()) {
-        auto [lowestSellPrice, sellOrders] = *sells.begin();
+        auto& [lowestSellPrice, sellOrders] = *sells.begin();
 
         if (price >= lowestSellPrice) {
             Order* sellOrder = sellOrders.front();
             sellOrders.pop();
             auto tradeQuantity = std::min(sellOrder->quantity_, quantity);
             quantity -= tradeQuantity;
+            sellPriceLevels[sellOrder->price_] -= tradeQuantity;
 
             Trade trade = {.timestamp = timestamp,
                            .price = price,
@@ -54,13 +55,14 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
     if (quantity > 0) {
         std::unique_ptr<Order> order = std::make_unique<Order>(
             Order{orderId, timestamp, price, quantity, type, symbol, "BUY"});
-        orders.emplace(std::make_pair(orderId, std::move(order)));
+
         if (!buys.contains(price)) {
             buys.emplace(std::make_pair(price, std::queue<Order*>{}));
         }
 
-        auto buyOrders = buys.at(price);
+        auto& buyOrders = buys.at(price);
         buyOrders.push(order.get());
+        orders.emplace(std::make_pair(orderId, std::move(order)));
 
         if (!buyPriceLevels.contains(price)) {
             buyPriceLevels.emplace(std::make_pair(price, 0));
@@ -78,13 +80,14 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
     std::vector<Trade> trades{};
 
     while (quantity > 0 and !buys.empty()) {
-        auto [highestBuyPrice, buyOrders] = *buys.begin();
+        auto& [highestBuyPrice, buyOrders] = *buys.begin();
 
         if (price <= highestBuyPrice) {
             Order* buyOrder = buyOrders.front();
             buyOrders.pop();
             auto tradeQuantity = std::min(buyOrder->quantity_, quantity);
             quantity -= tradeQuantity;
+            buyPriceLevels[buyOrder->price_] -= tradeQuantity;
 
             Trade trade = {.timestamp = timestamp,
                            .price = price,
@@ -103,14 +106,14 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
     if (quantity > 0) {
         std::unique_ptr<Order> order = std::make_unique<Order>(
             Order{orderId, timestamp, price, quantity, type, symbol, "SELL"});
-        orders.emplace(std::make_pair(orderId, std::move(order)));
 
         if (!sells.contains(price)) {
             sells.emplace(std::make_pair(price, std::queue<Order*>{}));
         }
 
-        auto sellOrders = sells.at(price);
+        auto& sellOrders = sells.at(price);
         sellOrders.push(order.get());
+        orders.emplace(std::make_pair(orderId, std::move(order)));
 
         if (!sellPriceLevels.contains(price)) {
             sellPriceLevels.emplace(std::make_pair(price, 0));
