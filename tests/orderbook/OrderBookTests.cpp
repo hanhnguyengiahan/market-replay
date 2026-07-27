@@ -9,6 +9,7 @@ class OrderBookTest : public testing::Test {
     OrderBook orderBook;
 };
 
+// Add Order
 TEST_F(OrderBookTest, EmptyBookHasNoPriceLevels) {
     EXPECT_TRUE(orderBook.getPriceLevels("BUY").empty());
     EXPECT_TRUE(orderBook.getPriceLevels("SELL").empty());
@@ -66,6 +67,7 @@ TEST_F(OrderBookTest, LowestSellsReturnFromPriceLevels) {
     EXPECT_EQ(orderBook.getPriceLevels("SELL"), expected);
 }
 
+// Trade
 TEST_F(OrderBookTest, NoTradeWhenPricesDoNotCross) {
     auto buy = createOrder(1, 150.00, 100, "BUY");
     auto sell = createOrder(2, 151.00, 100, "SELL");
@@ -96,7 +98,9 @@ TEST_F(OrderBookTest, IncomingOrderCanBePartiallyFilled) {
     auto buy = createOrder(2, 150.00, 200, "BUY");
 
     orderBook.addOrder(sell);
-    orderBook.addOrder(buy);
+    auto trades = orderBook.addOrder(buy);
+
+    EXPECT_EQ(trades, (std::vector<Trade>{{1000002, 150.00, 100, 2}}));
 
     EXPECT_EQ(orderBook.getPriceLevels("BUY"),
               (std::vector<std::pair<price_t, quantity_t>>{{150.00, 100}}));
