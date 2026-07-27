@@ -3,14 +3,13 @@
 #include "ftxui/component/captured_mouse.hpp" // for ftxui
 #include "ftxui/component/component.hpp" // for Slider, Checkbox, Vertical, Renderer, Button, Input, Menu, Radiobox, Toggle
 #include "ftxui/dom/elements.hpp"
+#include <format>
 #include <ftxui/component/event.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 
 using namespace ftxui;
 
 void renderApp(Application& app) {
-    using namespace ftxui;
-
     auto screen = ScreenInteractive::FitComponent();
 
     const std::vector<std::string> menu_entries = {
@@ -50,6 +49,7 @@ void renderApp(Application& app) {
         }
     }).detach();
 }
+
 Element renderReplayInfo(Application& app) {
     return vbox({
                text("Filename: " + app.getFilename()),
@@ -65,8 +65,6 @@ Element renderReplayInfo(Application& app) {
 }
 
 Element renderOrderBook(Application& app) {
-    using namespace ftxui;
-
     auto bids = app.getPriceLevels("BUY");
     Elements bidElements;
     for (const auto& [price, quantity] : bids) {
@@ -83,9 +81,9 @@ Element renderOrderBook(Application& app) {
     return vbox({text("Order Book") | bold | center, separator(),
 
                  hbox({
-                     text("Bid") | bold | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
+                     text(std::format("{:^{}}", "Bid", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
                      separator(),
-                     text("Ask") | bold | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
+                     text(std::format("{:^{}}", "Ask", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
                  }),
 
                  separator(),
@@ -95,5 +93,5 @@ Element renderOrderBook(Application& app) {
                      separator(),
                      vbox(sellElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
                  })}) |
-           border;
+           border | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH);
 }
