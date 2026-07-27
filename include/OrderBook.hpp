@@ -10,6 +10,8 @@ struct Trade {
     price_t price_;
     quantity_t quantity_;
     orderId_t aggressor_;
+
+    bool operator==(const Trade&) const = default;
 };
 
 using orders_queue_t = std::queue<Order*>;
