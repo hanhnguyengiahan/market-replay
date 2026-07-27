@@ -30,8 +30,9 @@ enable_testing()
 
 add_executable(
   tests
-  tests/orderbook/OrderBookTests.cpp
+  tests/orderbook/AddOrderTests.cpp
   src/OrderBook.cpp
+  tests/orderbook/CancelOrderTests.cpp
 )
 
 target_include_directories(tests PRIVATE
