@@ -18,9 +18,9 @@ using side_t = std::string;
 
 class Order {
   public:
-    Order(orderId_t orderId, timestamp_t timestamp, price_t price, quantity_t quantity, type_t type,
+    Order(orderId_t orderId, timestamp_t timestamp, price_t price, quantity_t quantity,
           symbol_t symbol, side_t side)
-        : orderId_{orderId}, timestamp_{timestamp}, price_{price}, quantity_{quantity}, type_{type},
+        : orderId_{orderId}, timestamp_{timestamp}, price_{price}, quantity_{quantity},
           symbol_{symbol}, side_{side}, cancelled_{false} {};
     orderId_t orderId_;
     timestamp_t timestamp_;

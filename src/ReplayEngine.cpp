@@ -107,7 +107,7 @@ void ReplayEngine::updateOrderBook(MarketEvent& event) {
         orderBook_.cancelOrder(event.orderId_);
     } else {
         orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
-                            event.type_, event.symbol_, event.side_);
+                            event.symbol_, event.side_);
     }
 }
 

@@ -19,8 +19,8 @@ bool OrderBook::cancelOrder(orderId_t orderId) {
 }
 
 template <typename Compare>
-void OrderBook::updatePriceLevels(std::map<price_t, quantity_t, Compare>& priceLevels,
-                                  price_t& price, quantity_t& quantity, bool add) {
+void OrderBook::updatePriceLevels(price_levels_t<Compare>& priceLevels, price_t& price,
+                                  quantity_t& quantity, bool add) {
     if (!priceLevels.contains(price)) {
         priceLevels.emplace(price, 0);
     }
@@ -35,21 +35,25 @@ void OrderBook::updatePriceLevels(std::map<price_t, quantity_t, Compare>& priceL
     }
 }
 
+std::vector<Trade> OrderBook::addOrder(Order& order) {
+    return addOrder(order.orderId_, order.timestamp_, order.price_, order.quantity_, order.symbol_,
+                    order.side_);
+}
+
 std::vector<Trade> OrderBook::addOrder(orderId_t orderId, timestamp_t timestamp, price_t price,
-                                       quantity_t quantity, type_t type, symbol_t symbol,
-                                       side_t side) {
+                                       quantity_t quantity, symbol_t symbol, side_t side) {
 
     if (side == "BUY") {
-        return addBuyOrder(orderId, timestamp, price, quantity, type, symbol);
+        return addBuyOrder(orderId, timestamp, price, quantity, symbol);
     } else if (side == "SELL") {
-        return addSellOrder(orderId, timestamp, price, quantity, type, symbol);
+        return addSellOrder(orderId, timestamp, price, quantity, symbol);
     }
 
     return std::vector<Trade>{};
 }
 
 std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timestamp, price_t price,
-                                          quantity_t quantity, type_t type, symbol_t symbol) {
+                                          quantity_t quantity, symbol_t symbol) {
 
     std::vector<Trade> trades{};
 
@@ -66,10 +70,10 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
 
                 updatePriceLevels(sellPriceLevels, sellOrder->price_, tradeQuantity, false);
 
-                Trade trade = {.timestamp = timestamp,
-                               .price = price,
-                               .quantity = tradeQuantity,
-                               .aggressor = orderId};
+                Trade trade = {.timestamp_ = timestamp,
+                               .price_ = price,
+                               .quantity_ = tradeQuantity,
+                               .aggressor_ = orderId};
 
                 trades.push_back(trade);
             } else {
@@ -84,8 +88,8 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
     }
 
     if (quantity > 0) {
-        std::unique_ptr<Order> order = std::make_unique<Order>(
-            Order{orderId, timestamp, price, quantity, type, symbol, "BUY"});
+        std::unique_ptr<Order> order =
+            std::make_unique<Order>(Order{orderId, timestamp, price, quantity, symbol, "BUY"});
 
         if (!buys.contains(price)) {
             buys.emplace(std::make_pair(price, std::queue<Order*>{}));
@@ -106,7 +110,7 @@ std::vector<Trade> OrderBook::addBuyOrder(orderId_t orderId, timestamp_t timesta
 }
 
 std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timestamp, price_t price,
-                                           quantity_t quantity, type_t type, symbol_t symbol) {
+                                           quantity_t quantity, symbol_t symbol) {
 
     std::vector<Trade> trades{};
 
@@ -122,10 +126,10 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
                 quantity -= tradeQuantity;
                 buyPriceLevels[buyOrder->price_] -= tradeQuantity;
 
-                Trade trade = {.timestamp = timestamp,
-                               .price = price,
-                               .quantity = tradeQuantity,
-                               .aggressor = orderId};
+                Trade trade = {.timestamp_ = timestamp,
+                               .price_ = price,
+                               .quantity_ = tradeQuantity,
+                               .aggressor_ = orderId};
 
                 trades.push_back(trade);
             } else {
@@ -140,8 +144,8 @@ std::vector<Trade> OrderBook::addSellOrder(orderId_t orderId, timestamp_t timest
     }
 
     if (quantity > 0) {
-        std::unique_ptr<Order> order = std::make_unique<Order>(
-            Order{orderId, timestamp, price, quantity, type, symbol, "SELL"});
+        std::unique_ptr<Order> order =
+            std::make_unique<Order>(Order{orderId, timestamp, price, quantity, symbol, "SELL"});
 
         if (!sells.contains(price)) {
             sells.emplace(std::make_pair(price, std::queue<Order*>{}));
