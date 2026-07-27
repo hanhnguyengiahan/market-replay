@@ -26,6 +26,7 @@ class OrderBook {
     std::vector<Trade> addOrder(Order& order);
     bool modifyOrder(orderId_t orderId, quantity_t quantity);
     std::vector<std::pair<price_t, quantity_t>> getPriceLevels(std::string side);
+    void reset();
 
   private:
     std::vector<Trade> addBuyOrder(orderId_t orderId, timestamp_t timestamp, price_t price,

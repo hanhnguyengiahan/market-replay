@@ -1,6 +1,14 @@
 #include "OrderBook.hpp"
 #include <algorithm>
 
+void OrderBook::reset() {
+    buys.clear();
+    sells.clear();
+    orders.clear();
+    buyPriceLevels.clear();
+    sellPriceLevels.clear();
+}
+
 bool OrderBook::cancelOrder(orderId_t orderId) {
     if (!orders.contains(orderId))
         return false;

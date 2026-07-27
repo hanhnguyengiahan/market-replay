@@ -128,6 +128,7 @@ void ReplayEngine::pause() {
 
 void ReplayEngine::reset() {
     currentEvent_ = -1;
+    orderBook_.reset();
 }
 
 void ReplayEngine::seek(timestamp_t timestampToSeek) {
