@@ -45,9 +45,9 @@ std::string ReplayEngine::getLastEventTimestamp() {
 
 std::vector<std::pair<std::string, std::string>> ReplayEngine::getPriceLevels(std::string side) {
     std::vector<std::pair<std::string, std::string>> res{};
-    std::vector<std::pair<price_t, quantity_t>> priceLevels = orderBook_.getPriceLevels(side);
-    for (const auto& priceLevel : priceLevels) {
-        res.emplace_back(std::to_string(priceLevel.first), std::to_string(priceLevel.second));
+    auto priceLevels = orderBook_.getPriceLevels(side);
+    for (const auto& [price, quantity] : priceLevels) {
+        res.emplace_back(std::format("{:.2f}", price), std::to_string(quantity));
     }
     return res;
 }
