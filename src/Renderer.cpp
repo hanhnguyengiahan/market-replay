@@ -34,6 +34,10 @@ void renderApp(Application& app) {
 
     component = CatchEvent(component, [&](Event event) {
         if (event == Event::Return) {
+            if (menu_selected == Command::QUIT) {
+                screen.ExitLoopClosure()();
+                return true;
+            }
             app.parse(menu_selected);
             return true;
         }
@@ -41,13 +45,6 @@ void renderApp(Application& app) {
     });
 
     screen.Loop(component);
-
-    std::thread([&] {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::microseconds(500));
-            screen.Post(Event::Custom);
-        }
-    }).detach();
 }
 
 Element renderReplayInfo(Application& app) {
