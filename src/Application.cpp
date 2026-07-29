@@ -26,8 +26,6 @@ void Application::parse(int command) {
         }
     } else if (command == Command::PAUSE) {
         engine.pause();
-    } else if (command == Command::QUIT) {
-        // std::this_thread::
     }
 }
 
