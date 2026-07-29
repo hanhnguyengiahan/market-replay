@@ -26,7 +26,12 @@ void renderApp(Application& app) {
                    hbox({
                        renderReplayInfo(app) | size(WIDTH, EQUAL, REPLAY_INFO_TOTAL_WIDTH),
                        renderOrderBook(app) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH),
-                       menu->Render() | border | size(WIDTH, EQUAL, MENU_TOTAL_WIDTH),
+                       vbox({
+                           filler(),
+                           menu->Render(),
+                           filler(),
+                       }) | border |
+                           size(WIDTH, EQUAL, MENU_TOTAL_WIDTH),
                    }),
                }) |
                size(WIDTH, EQUAL, APP_WIDTH) | size(HEIGHT, EQUAL, APP_HEIGHT) | border;
@@ -48,47 +53,87 @@ void renderApp(Application& app) {
 }
 
 Element renderReplayInfo(Application& app) {
+    auto status = app.getStatus();
+
+    auto statusColor = ftxui::Color::DarkGreen;
+    if (status == "In progress") {
+        statusColor = ftxui::Color::DarkOrange;
+    } else if (status == "Finished") {
+        statusColor = ftxui::Color::IndianRed1;
+    }
+
     return vbox({
-               text("Filename: " + app.getFilename()),
-               text("State: " + app.getStatus()),
-               text("Progress") | bold,
-               gauge(app.getProgress()) | border,
-               text("Timestamp: " + app.getLastEventTimestamp()),
+               hbox({
+                   text("File: ") | bold,
+                   text(app.getFilename()) | color(Color::White),
+               }),
+               hbox({
+                   text("State: ") | bold,
+                   text(status) | bold | color(statusColor),
+               }),
+
+               hbox({
+                   text("Timestamp: ") | bold,
+                   text(app.getLastEventTimestamp()),
+               }),
+
                separator(),
+
+               text("Progress") | bold,
+               gauge(app.getProgress()) | border | color(ftxui::Color::DarkGreen) |
+                   size(WIDTH, EQUAL, REPLAY_INFO_TOTAL_WIDTH),
+
+               separator(),
+
                text("Last Event") | bold,
-               text(app.getLastEvent()),
+               text(app.getLastEvent()) | border | center | color(Color::Yellow),
            }) |
-           border;
+           border | color(Color::White);
 }
 
 Element renderOrderBook(Application& app) {
     auto bids = app.getPriceLevels("BUY");
     Elements bidElements;
+
     for (const auto& [price, quantity] : bids) {
-        bidElements.push_back(text(std::format("{:<10} {:>8}", price, quantity)));
+        bidElements.push_back(hbox({
+                                  text(std::format("{:<10}", price)),
+                                  text(std::format("{:>8}", quantity)),
+                              }) |
+                              color(Color::Green));
     }
 
     auto sells = app.getPriceLevels("SELL");
     Elements sellElements;
 
     for (const auto& [price, quantity] : sells) {
-        sellElements.push_back(text(std::format("{:<10} {:>8}", quantity, price)));
+        sellElements.push_back(hbox({
+                                   text(std::format("{:<10}", quantity)),
+                                   text(std::format("{:>8}", price)),
+                               }) |
+                               color(Color::Red));
     }
 
-    return vbox({text("Order Book") | bold | center, separator(),
+    return vbox({text(" ORDER BOOK ") | bold | center,
 
-                 hbox({
-                     text(std::format("{:^{}}", "Bid", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
-                     separator(),
-                     text(std::format("{:^{}}", "Ask", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
-                 }),
+                 separator(),
+
+                 hbox({text(std::format("{:^{}}", "BID", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
+
+                       separator(),
+
+                       text(std::format("{:^{}}", "ASK", ORDERBOOK_TOTAL_WIDTH / 2)) | bold}),
 
                  separator(),
 
                  hbox({
                      vbox(bidElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
+
                      separator(),
+
                      vbox(sellElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
-                 })}) |
+                 })
+
+           }) |
            border | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH);
 }
