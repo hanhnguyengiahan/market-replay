@@ -91,27 +91,27 @@ Element renderReplayInfo(Application& app) {
            border | color(Color::White);
 }
 
+Element renderOrderRow(std::string left, std::string right, Color colour) {
+    return hbox({
+               text(left) | flex,
+               text(right),
+           }) |
+           color(colour);
+}
+
 Element renderOrderBook(Application& app) {
     auto bids = app.getPriceLevels("BUY");
     Elements bidElements;
 
-    for (const auto& [price, quantity] : bids) {
-        bidElements.push_back(hbox({
-                                  text(std::format("{:<10}", price)),
-                                  text(std::format("{:>8}", quantity)),
-                              }) |
-                              color(Color::Green));
+    for (const auto [price, quantity] : bids) {
+        bidElements.push_back(renderOrderRow(price, quantity, Color::Green));
     }
 
     auto sells = app.getPriceLevels("SELL");
     Elements sellElements;
 
     for (const auto& [price, quantity] : sells) {
-        sellElements.push_back(hbox({
-                                   text(std::format("{:<10}", quantity)),
-                                   text(std::format("{:>8}", price)),
-                               }) |
-                               color(Color::Red));
+        sellElements.push_back(renderOrderRow(quantity, price, Color::Red));
     }
 
     return vbox({text(" ORDER BOOK ") | bold | center,
