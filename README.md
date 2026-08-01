@@ -6,7 +6,7 @@
 
 A multithreaded market replay engine written in modern C++20.
 
-The application replays historical market events from a CSV file, allowing users to play, pause, step through, and reset the replay from an interactive terminal interface.
+The application replays historical market events from a CSV file, allowing users to play, pause, step through, step back, and reset the replay from an interactive terminal interface.
 
 ## Features
 
@@ -15,6 +15,7 @@ The application replays historical market events from a CSV file, allowing users
   - Play: replaying the market events
   - Pause: pause the replay at any point to further inspect event or order
   - Step: step one step forward to the next available event
+  - Back: step one step backword to the previous available event
   - Reset: go back to the first event
   - Quit
 
@@ -41,6 +42,7 @@ specify a dataset:
 | Play | Begin replay |
 | Pause | Pause replay |
 | Step | Process one event |
+| Back | Undo previous event |
 | Reset | Return to the beginning |
 | Quit | Exit the application |
 
