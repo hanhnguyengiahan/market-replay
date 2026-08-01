@@ -13,14 +13,14 @@ void renderApp(Application& app) {
     auto screen = ScreenInteractive::FitComponent();
 
     const std::vector<std::string> menu_entries = {
-        "play", "step", "pause", "reset", "seek", "quit",
+        "play", "step", "back", "pause", "reset", "quit",
     };
     int menu_selected = -1;
     auto menu = Menu(&menu_entries, &menu_selected);
 
     auto component = Renderer(menu, [&] {
         return vbox({
-                   text("Market Replay") | bold | center,
+                   text("MARKET REPLAY") | bold | center,
                    separator(),
 
                    hbox({
@@ -86,7 +86,8 @@ Element renderReplayInfo(Application& app) {
                separator(),
 
                text("Last Event") | bold,
-               text(app.getLastEvent()) | border | center | color(Color::Yellow),
+               text(app.getLastEvent()) | border | color(Color::Yellow) |
+                   size(WIDTH, EQUAL, REPLAY_INFO_TOTAL_WIDTH),
            }) |
            border | color(Color::White);
 }
@@ -114,25 +115,26 @@ Element renderOrderBook(Application& app) {
         sellElements.push_back(renderOrderRow(quantity, price, Color::Red));
     }
 
-    return vbox({text(" ORDER BOOK ") | bold | center,
+    return vbox({
+               text(" ORDER BOOK ") | bold | center,
 
-                 separator(),
+               separator(),
 
-                 hbox({text(std::format("{:^{}}", "BID", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
-
-                       separator(),
-
-                       text(std::format("{:^{}}", "ASK", ORDERBOOK_TOTAL_WIDTH / 2)) | bold}),
-
-                 separator(),
-
-                 hbox({
-                     vbox(bidElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
+               hbox({text(std::format("{:^{}}", "BID", ORDERBOOK_TOTAL_WIDTH / 2)) | bold,
 
                      separator(),
 
-                     vbox(sellElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
-                 })
+                     text(std::format("{:^{}}", "ASK", ORDERBOOK_TOTAL_WIDTH / 2)) | bold}),
+
+               separator(),
+
+               hbox({
+                   vbox(bidElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
+
+                   separator(),
+
+                   vbox(sellElements) | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH / 2),
+               }),
 
            }) |
            border | size(WIDTH, EQUAL, ORDERBOOK_TOTAL_WIDTH);

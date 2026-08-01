@@ -31,6 +31,8 @@ class ReplayEngine {
     void play();
     void executeStep(int numSteps);
     void step(int numSteps);
+    void back();
+    void executeBack();
     void pause();
     void reset();
     void seek(timestamp_t timestampToSeek);
@@ -43,7 +45,7 @@ class ReplayEngine {
 
   private:
     void keepAlive(std::stop_token st);
-    void updateOrderBook(MarketEvent& event);
+    void updateOrderBook(MarketEvent& event, std::string type = "");
 
     std::vector<MarketEvent> events_;
     int currentEvent_;
@@ -55,6 +57,7 @@ class ReplayEngine {
     std::condition_variable_any cv;
     bool playing = false;
     bool stepping = false;
+    bool backing = false;
     bool paused = false;
 
     OrderBook orderBook_;

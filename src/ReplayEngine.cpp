@@ -55,7 +55,7 @@ std::vector<std::pair<std::string, std::string>> ReplayEngine::getPriceLevels(st
 void ReplayEngine::keepAlive(std::stop_token st) {
     while (!st.stop_requested()) {
         std::unique_lock<std::mutex> lk(m);
-        cv.wait(lk, st, [this] { return !paused && (playing || stepping); });
+        cv.wait(lk, st, [this] { return !paused && (playing || stepping || backing); });
 
         if (st.stop_requested()) {
             break;
@@ -65,6 +65,8 @@ void ReplayEngine::keepAlive(std::stop_token st) {
             executePlay();
         } else if (stepping) {
             executeStep(numSteps_);
+        } else if (backing) {
+            executeBack();
         }
         lk.unlock();
     }
@@ -102,8 +104,12 @@ void ReplayEngine::executeStep(int numSteps) {
     stepping = false;
 }
 
-void ReplayEngine::updateOrderBook(MarketEvent& event) {
-    if (event.type_ == "CANCEL_ORDER") {
+void ReplayEngine::updateOrderBook(MarketEvent& event, std::string type) {
+    // undo the cancel
+    if (event.type_ == "CANCEL_ORDER" && type == "CANCEL_ORDER") {
+        orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
+                            event.symbol_, event.side_);
+    } else if (event.type_ == "CANCEL_ORDER" || type == "CANCEL_ORDER") {
         orderBook_.cancelOrder(event.orderId_);
     } else {
         orderBook_.addOrder(event.orderId_, event.timestamp_, event.price_, event.quantity_,
@@ -129,6 +135,25 @@ void ReplayEngine::pause() {
 void ReplayEngine::reset() {
     currentEvent_ = -1;
     orderBook_.reset();
+}
+
+void ReplayEngine::executeBack() {
+    if (std::cmp_greater(currentEvent_, -1)) {
+        auto event = events_[currentEvent_];
+        event.print();
+        updateOrderBook(event, "CANCEL_ORDER"); // TODO
+        currentEvent_ -= 1;
+    }
+    backing = false;
+}
+
+void ReplayEngine::back() {
+    {
+        std::unique_lock<std::mutex> lk(m);
+        paused = false;
+        backing = true;
+    }
+    cv.notify_one();
 }
 
 void ReplayEngine::seek(timestamp_t timestampToSeek) {

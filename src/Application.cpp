@@ -19,14 +19,17 @@ void Application::parse(int command) {
     } else if (command == Command::STEP) {
         int numSteps{DEFAULT_NUM_STEP};
         engine.step(numSteps);
-    } else if (command == Command::SEEK) {
-        timestamp_t timestamp;
-        if (timestamp) {
-            engine.seek(timestamp);
-        }
     } else if (command == Command::PAUSE) {
         engine.pause();
+    } else if (command == Command::BACK) {
+        engine.back();
     }
+    // } else if (command == Command::SEEK) {
+    //     timestamp_t timestamp;
+    //     if (timestamp) {
+    //         engine.seek(timestamp);
+    //     }
+    // }
 }
 
 double Application::getProgress() {

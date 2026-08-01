@@ -8,7 +8,7 @@
 
 const int DEFAULT_NUM_STEP = 1;
 
-enum Command { PLAY = 0, STEP, PAUSE, RESET, SEEK, QUIT };
+enum Command { PLAY = 0, STEP, BACK, PAUSE, RESET, QUIT };
 
 class Application {
   public:
